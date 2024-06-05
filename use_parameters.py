@@ -1,11 +1,11 @@
 mcool_files =["/broad/boxialab/shawn/projects/microC/merged_new/HCT/HCT_WT_new_merged.pairs_dedup_941M_600.mcool"]
-chip_condition_bigwigs = ["/broad/boxialab/shawn/projects/microC/bw_track/HCT/HCT116_POL2A_hg38_ENCFF779RGR.bigWig",
-                          "/broad/boxialab/shawn/projects/microC/bw_track/HCT/227CVTLT3_2_0420637073_ChIP-55_S10_L002_hg38_sort.rmdup.bw",
-                         "/broad/boxialab/shawn/projects/microC/bw_track/HCT/HCT116_J_chip_85_87_sort_dedup.bw",
-                         "/broad/boxialab/shawn/projects/J/self_data/RNA-seq/HCT116/23022FL-07-01-04_S4_L008Aligned.bw",
-                          "/broad/boxialab/shawn/projects/microC/bw_track/HCT/HCT116_H3K27ac_ENCFF758DHJ.bigWig"]
-condition_order = ['POLii', 'CTCF', 'h7','RNA',"27AC"]
-DEFAULT_COLOR_LIST = ["#1fa774", "#1fa774","#1fa774", "#0485d1","#0485d1"]
+chip_condition_bigwigs = ["/broad/boxialab/shawn/projects/pub_data/chip-seq/hek_cpm_chip/H7_2min_6min_merge_sort_dedup_CPM.bw",
+                          "/broad/boxialab/shawn/projects/pub_data/chip-seq/hek_cpm_chip/23022FL-03-01-27_S27_L001_hg38_sort_cpm.rmdup.bw",
+                         "/broad/boxialab/shawn/projects/hic/chip-seq/2.peak/HEK293T_polII2A[43075.bw]_cistrome_hg38.bigwig",
+                         "/broad/boxialab/shawn/projects/hic/chip-seq/2.peak/HEK293T-H3K27ac-hg38.bigwig",
+                          "/broad/boxialab/shawn/projects/J/RNA-seq/HEK/1.mapping/23022FL-03-01-33_S33_L001Aligned.bw"]
+condition_order = ['h7j', 'CTCF', 'polII',"27AC",'RNA']
+DEFAULT_COLOR_LIST = ["#1fa774", "#0485d1","#8e82fe", "#960056","#fd3c06"]
 ymax=[3,10,0.7,10,10,10]
 ymin=[0,0,0,0,0]
 bw_bins=7000
