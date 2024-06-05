@@ -35,3 +35,4 @@ region_plot_params = {"region": region_str,
 frame = make_region_plot(**region_plot_params)
 fig1 = frame.plot(region_str)
 fig1
+fig.savefig("/broad/boxialab/shawn/projects/pub_analysis/test_antibodies/test_antibody_chip.pdf", format='pdf')
