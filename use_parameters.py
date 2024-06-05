@@ -16,12 +16,11 @@ track_height=1.6
 
 region_str = "17:72,306,437-72,933,650" # provide region in format like chr15:99,921,434-100,682,822
 
-MICROC_PLOTTING_PARAMS = {"style":"matrix",
-                          "transform":"log2",
+MICROC_PLOTTING_PARAMS = {"style":"triangular",
                           "depth_ratio":"full",
                           "balance":True,
-                          "cmap":'Reds',
-                          "max_value":10^-3}
+                          "cmap":"JuiceBoxLike",
+                          "max_value":-4}
 
 region_plot_params = {"region": region_str,
                     "resolution": 600,
