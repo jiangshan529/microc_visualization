@@ -28,6 +28,8 @@ from coolbox.api import *
 from coolbox.utilities import GenomeRange
 from pygenometracks import readBed, readGtf
 from pygenometracks.tracks import BedTrack
+import matplotlib as mpl
+mpl.rcParams['pdf.fonttype']=42 ### save txt to changable font
 
 # Define plotting aesthetics as global variables
 HIGHLIGHT_PARAMS = {"color":"gray",
