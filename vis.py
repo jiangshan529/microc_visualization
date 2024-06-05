@@ -34,12 +34,7 @@ HIGHLIGHT_PARAMS = {"color":"gray",
                    "alpha":0.05,
                    "border_line":False}
 
-MICROC_PLOTTING_PARAMS = {"style":"matrix",
-                          "transform":"log10",
-                          "depth_ratio":"full",
-                          "balance":True,
-                          "cmap":"Reds",
-                          "max_value":0.01}
+
 
 SPACER_HEIGHT = 0.4
 DEFAULT_COLOR_LIST = ["#FF0000", "#00FA00", "#0000FF", "#A0F000"]
@@ -85,17 +80,18 @@ def make_region_plot(region, resolution, highlight_region_list, microc_file, mic
             bigwig_list = make_bigwig_list(chip_list, region, condition_order, 
                                            DEFAULT_COLOR_LIST[i%len(DEFAULT_COLOR_LIST)], bw_bins=bigwig_bins)
             i += 1
+        
             for bigwig in bigwig_list:
                 frame += bigwig + Spacer(SPACER_HEIGHT)
-        f_bigwig_list = make_bigwig_list(forward_proseq_list, region, condition_order, 
-                                       DEFAULT_COLOR_LIST[i%len(DEFAULT_COLOR_LIST)], bw_bins=pro_bins,  
-                                         track_height=PRO_SEQ_TRACK_HEIGHT)
-        r_bigwig_list = make_bigwig_list(reverse_proseq_list, region, len(reverse_proseq_list)*[""], 
-                               DEFAULT_COLOR_LIST[(i+1)%len(DEFAULT_COLOR_LIST)], bw_bins=pro_bins, 
-                                         track_height=PRO_SEQ_TRACK_HEIGHT)
-#         r_bigwig_list = [r_bigwig + Inverted() for r_bigwig in r_bigwig_list]
-        for f_bigwig, r_bigwig in zip(f_bigwig_list, r_bigwig_list):
-                frame += f_bigwig + r_bigwig + Spacer(SPACER_HEIGHT)
+#         f_bigwig_list = make_bigwig_list(forward_proseq_list, region, condition_order, 
+#                                        DEFAULT_COLOR_LIST[i%len(DEFAULT_COLOR_LIST)], bw_bins=pro_bins,  
+#                                          track_height=PRO_SEQ_TRACK_HEIGHT)
+#         r_bigwig_list = make_bigwig_list(reverse_proseq_list, region, len(reverse_proseq_list)*[""], 
+#                                DEFAULT_COLOR_LIST[(i+1)%len(DEFAULT_COLOR_LIST)], bw_bins=pro_bins, 
+#                                          track_height=PRO_SEQ_TRACK_HEIGHT)
+# #         r_bigwig_list = [r_bigwig + Inverted() for r_bigwig in r_bigwig_list]
+#         for f_bigwig, r_bigwig in zip(f_bigwig_list, r_bigwig_list):
+#                 frame += f_bigwig + r_bigwig + Spacer(SPACER_HEIGHT)
         annotations = NewBed(*ANNOTATIONS_PARAMS)
         frame += annotations
         return frame
@@ -123,8 +119,9 @@ def make_bigwig_list(bigwigs, region, condition_order, color, bw_bins, track_hei
     Helper function for `make_region_plot` that converts file paths to bigwig plotting objects.
     """
     assert len(bigwigs) % len(condition_order) == 0
+
     bigwig_list = [BigWig(bigwig, number_of_bins=bw_bins) + Title(title) + Color(color) \
-                            + TrackHeight(track_height) for bigwig, title in zip(bigwigs, condition_order)]
+                                + TrackHeight(track_height) + MaxValue(y_max) + MinValue(y_min) for bigwig,title,color,y_max,y_min in zip(bigwigs, condition_order,DEFAULT_COLOR_LIST, ymax,ymin)]
     if autoscale:
         bigwig_list = auto_scale_bigwigs(bigwig_list, region, y_max=y_max)
     return bigwig_list
