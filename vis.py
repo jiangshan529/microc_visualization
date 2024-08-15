@@ -1,9 +1,6 @@
 #!/usr/bin/env python # [1]
 """\
-This script contains all the functions 
-used for region visualization in the paper
-"Putative Looping Factor ZNF143/ZFP143 is 
-an Essential Transcriptional Regulator with No Looping Function"
+when plot insultion score, make sure the title name is 'insulation'
 
 Author: Domenic Narducci
 """
@@ -121,9 +118,15 @@ def make_bigwig_list(bigwigs, region, condition_order, color, bw_bins, track_hei
     Helper function for `make_region_plot` that converts file paths to bigwig plotting objects.
     """
     assert len(bigwigs) % len(condition_order) == 0
-
-    bigwig_list = [BigWig(bigwig, number_of_bins=bw_bins) + Title(title) + Color(color) \
-                                + TrackHeight(track_height) + MaxValue(y_max) + MinValue(y_min) for bigwig,title,color,y_max,y_min in zip(bigwigs, condition_order,DEFAULT_COLOR_LIST, ymax,ymin)]
+    bigwig_list = []
+    for bigwig, title, color, y_max, y_min in zip(bigwigs, condition_order, DEFAULT_COLOR_LIST, ymax, ymin):
+        if title == "insulation":  # Adjust color for insulation track
+            bigwig_track = BigWig(bigwig, number_of_bins=bw_bins, threshold_color="blue", threshold=0)
+        else:
+            bigwig_track = BigWig(bigwig, number_of_bins=bw_bins)
+        
+        track = bigwig_track + Title(title) + Color(color) + TrackHeight(track_height) + MaxValue(y_max) + MinValue(y_min)
+        bigwig_list.append(track)
     if autoscale:
         bigwig_list = auto_scale_bigwigs(bigwig_list, region, y_max=y_max)
     return bigwig_list
