@@ -1,6 +1,9 @@
 #!/usr/bin/env python # [1]
 """\
-when plot insultion score, make sure the title name is 'insulation'
+This script contains all the functions 
+used for region visualization in the paper
+"Putative Looping Factor ZNF143/ZFP143 is 
+an Essential Transcriptional Regulator with No Looping Function"
 
 Author: Domenic Narducci
 """
@@ -26,7 +29,7 @@ from coolbox.utilities import GenomeRange
 from pygenometracks import readBed, readGtf
 from pygenometracks.tracks import BedTrack
 import matplotlib as mpl
-mpl.rcParams['pdf.fonttype']=42 ### save txt to changable font
+mpl.rcParams['pdf.fonttype']=42
 
 # Define plotting aesthetics as global variables
 HIGHLIGHT_PARAMS = {"color":"gray",
@@ -38,11 +41,11 @@ HIGHLIGHT_PARAMS = {"color":"gray",
 SPACER_HEIGHT = 0.4
 DEFAULT_COLOR_LIST = ["#FF0000", "#00FA00", "#0000FF", "#A0F000"]
 PRO_SEQ_TRACK_HEIGHT = 1.2
-ANNOTATIONS_PARAMS = [{"height":2.5},
+ANNOTATIONS_PARAMS = [{"height":1},
                       {"file": "/broad/boxialab/shawn/projects/genome_sequence/human/hg38/HG38_annotation_bed6.bed", # PATH TO BED FILE OF GENE ANNOTATIONS
                        "max_labels":1000,
                        "merge_transcripts":True, 
-                       "gene_rows":6}]
+                       "gene_rows":3}]
 
 def cat_prefix_to_list(prefix, file_list):
     """
@@ -53,7 +56,7 @@ def cat_prefix_to_list(prefix, file_list):
 
 def make_region_plot(region, resolution, highlight_region_list, microc_file, microc_title,
                      chip_list_list, forward_proseq_list, reverse_proseq_list, condition_order, 
-                     bigwig_bins=3600, highlight_buffer=1000, pro_bins=None):
+                     bed_files, bigwig_bins=3600, highlight_buffer=1000, pro_bins=None):
     
     """
     Function that makes a plot of a region with Micro-C, ChIP-seq, and Pro-seq.
@@ -108,11 +111,16 @@ def make_region_plot(region, resolution, highlight_region_list, microc_file, mic
             frame = iterate_over_datasets(frame)
     else:
         frame = iterate_over_datasets(frame)
+   ### add bed motif 
+    for bed_file in bed_files:
+        bed_track = StrandMarkerTrack(bed_file)
+        bed_track.fetch_data(region)
+        frame += bed_track + Spacer(0.2)
     frame += XAxis()
     return frame
 
-def make_bigwig_list(bigwigs, region, condition_order, color, bw_bins, track_height=1.6, autoscale=False, 
-                     y_max=None):
+def make_bigwig_list(bigwigs, region, condition_order, color, bw_bins, track_height=3.5, autoscale=False, 
+                     y_max=None,threshold_color="blue",threshold=0):
     
     """
     Helper function for `make_region_plot` that converts file paths to bigwig plotting objects.
@@ -182,3 +190,31 @@ class NewBed(Track):
         ax.set_xlim([gr.start, gr.end])
 
         
+        ##region_str = ("chr19:27,638,001-30,000,000")
+# define StrandMarkerTrack for motif orientation
+class StrandMarkerTrack(Track):
+    def __init__(self, bed_file, **kwargs):
+        super().__init__(**kwargs)
+        self.bed_file = bed_file
+        self.data = []
+
+    def fetch_data(self, gr, **kwargs):
+        """get region from bed"""
+        self.data = []
+        with open(self.bed_file, "r") as f:
+            for line in f:
+                fields = line.strip().split("\t")
+                chrom, start, end, strand = fields[0], int(fields[1]), int(fields[2]), fields[3]
+                if chrom == gr.chrom and start < gr.end and end > gr.start:
+                    self.data.append((start, end, strand))
+        return self.data
+
+    def plot(self, ax, gr, **kwargs):
+        """plot arrow"""
+        for start, end, strand in self.data:
+            mid = (start + end) / 2
+            marker = ">" if strand == "+" else "<"
+            ax.text(mid, 0, marker, ha="center", va="center", fontsize=10, color="blue")
+        ax.set_xlim(gr.start, gr.end)
+        ax.set_ylim(-1, 1)
+        ax.axis("off") 
